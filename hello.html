@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SYSTEM BREACHED</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+      color: #00FF00;
+      font-family: 'Courier New', monospace;
+    }
+
+    canvas#matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      opacity: 0.2;
+    }
+
+    #mainText {
+      position: absolute;
+      top: 20%;
+      width: 100%;
+      text-align: center;
+      color: red;
+      font-size: 4em;
+      z-index: 3;
+      text-shadow: 0 0 20px red;
+      animation: flicker 1.5s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    #terminal {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30vh;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 10px;
+      font-size: 16px;
+      overflow-y: auto;
+      z-index: 2;
+    }
+
+    .static {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
+      opacity: 0.07;
+      z-index: 0;
+    }
+
+    #virus-scan {
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      background: #111;
+      color: red;
+      padding: 20px;
+      border: 2px solid red;
+      text-align: center;
+      z-index: 4;
+    }
+
+    #progress {
+      width: 0%;
+      height: 20px;
+      background: red;
+      transition: width 0.3s;
+    }
+
+    #progress-container {
+      width: 100%;
+      background: #333;
+      margin-top: 10px;
+    }
+
+    #screamer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      z-index: 99;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #screamer img {
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+
+    #biosScreen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: #000;
+      color: #0f0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100;
+      font-family: monospace;
+      padding: 40px;
+      font-size: 18px;
+    }
+
+    #rebootBtn {
+      display: none;
+      margin-top: 20px;
+      background: red;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #countdown {
+      font-size: 28px;
+      color: red;
+      margin-top: 20px;
+    }
+
+    #red-flash {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: red;
+      opacity: 0;
+      z-index: 98;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="static"></div>
+  <canvas id="matrix"></canvas>
+  <div id="mainText">SYSTEM HACKED</div>
+  <div id="terminal"></div>
+
+  <div id="virus-scan">
+    🔍 Scanning your files...
+    <div id="progress-container">
+      <div id="progress"></div>
+    </div>
+  </div>
+
+  <div id="screamer">
+    <img src="https://cyble.com/wp-content/uploads/2022/10/Figure-7-File-names-changed-by-the-fake-ransomware.jpg" alt="Screamer">
+  </div>
+
+  <div id="red-flash"></div>
+<center>
+  <div id="biosScreen">
+    <h2>BIOS V3.6 - SYSTEM RECOVERY</h2>
+    <p>Detected critical failure in user partition 0x00AAFF.</p>
+    <p>Overwriting bootloader...</p>
+    <p id="countdown">System will reboot in 10</p>
+    <button id="rebootBtn" onclick="location.reload()">Reboot Now</button>
+  </div>
+</center>
+  <audio id="bgAudio" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/24/audio_248c0a0d93.mp3" type="audio/mp3">
+  </audio>
+
+  <audio id="screamSound">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/30/audio_b3b15eab8e.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    // Matrix effect
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const letters = "01▌█▓▒░#".split("");
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array.from({ length: columns }).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 35);
+
+    // Terminal logs
+    const terminal = document.getElementById("terminal");
+    const logs = [
+      "[ACCESS] Injecting payload...",
+      "[MALWARE] ransomware.exe launched",
+      "[ALERT] Webcam active",
+      "[ROOTKIT] Kernel access granted",
+      "[LOG] Stealing data...",
+      "[CRITICAL] SYSTEM CORRUPTED",
+      "[UPLOAD] Files sent to darkweb...",
+      "[SCAN] Encrypting local storage..."
+    ];
+    let logIndex = 0;
+
+    function printLog() {
+      if (logIndex < logs.length) {
+        const p = document.createElement("div");
+        p.textContent = logs[logIndex++];
+        terminal.appendChild(p);
+        terminal.scrollTop = terminal.scrollHeight;
+        setTimeout(printLog, 1000);
+      }
+    }
+    printLog();
+
+    // Virus scan simulation
+    const progress = document.getElementById("progress");
+    let percent = 0;
+    const scan = setInterval(() => {
+      percent += 5;
+      progress.style.width = percent + "%";
+      if (percent >= 100) {
+        clearInterval(scan);
+        document.getElementById("virus-scan").innerHTML = "🧟 System Breach Confirmed";
+        setTimeout(triggerScreamer, 1000);
+        setTimeout(showBIOS, 3000);
+      }
+    }, 300);
+
+    // Screamer
+    function triggerScreamer() {
+      const flash = document.getElementById("red-flash");
+      flash.style.opacity = 1;
+      setTimeout(() => flash.style.opacity = 0, 200);
+
+      const screamer = document.getElementById("screamer");
+      const screamSound = document.getElementById("screamSound");
+      screamer.style.display = 'flex';
+      screamSound.play();
+      setTimeout(() => screamer.style.display = 'none', 2500);
+    }
+
+    // BIOS reboot
+    function showBIOS() {
+      document.getElementById("biosScreen").style.display = "block";
+      let countdown = 10;
+      const timer = setInterval(() => {
+        countdown--;
+        document.getElementById("countdown").innerText = "System will reboot in " + countdown;
+        if (countdown === 0) {
+          clearInterval(timer);
+          document.getElementById("countdown").innerText = "Ready to reboot.";
+          document.getElementById("rebootBtn").style.display = "inline-block";
+        }
+      }, 1000);
+    }
+
+    // Background audio autoplay
+    const bgAudio = document.getElementById("bgAudio");
+    bgAudio.volume = 0.5;
+    bgAudio.play().catch(() => {
+      document.body.addEventListener("click", () => bgAudio.play(), { once: true });
+    });
+  </script>
+</body>
+</html>
