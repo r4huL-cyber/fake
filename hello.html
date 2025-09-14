@@ -2,288 +2,258 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SYSTEM BREACHED</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D A R K</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
   <style>
-    html, body {
+    :root {
+      --text-color: rgba(220, 220, 200, 0.8);
+      --symbol-color: rgba(200, 200, 200, 0.5);
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    body, html {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      background: black;
-      color: #00FF00;
-      font-family: 'Courier New', monospace;
+      background-color: #000000;
+      color: var(--text-color);
+      font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
-    canvas#matrix {
-      position: fixed;
+    #background-canvas {
+      position: absolute;
       top: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 1;
-      opacity: 0.2;
+      filter: blur(1.5px);
     }
 
-    #mainText {
-      position: absolute;
-      top: 20%;
-      width: 100%;
-      text-align: center;
-      color: red;
-      font-size: 4em;
-      z-index: 3;
-      text-shadow: 0 0 20px red;
-      animation: flicker 1.5s infinite;
+    .main-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+      padding: 5vh 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    /* Animated Title */
+    .title {
+      font-size: 2.2rem;
+      font-weight: 300;
+      letter-spacing: 0.8em;
+      text-transform: uppercase;
+      padding-left: 0.8em;
+      margin-top: 5vh;
+      animation: flicker 3s infinite alternate;
+    }
+
+    /* Sub text animation */
+    .tit {
+      font-size: 1.2rem;
+      font-weight: 300;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      padding-left: 0.8em;
+      margin-top: 0vh;
+      animation: glitch 2.5s infinite;
     }
 
     @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #ff1177,
+                     0 0 40px #ff1177, 0 0 80px #ff1177;
+      }
+      20%, 24%, 55% {
+        opacity: 0.6;
+        text-shadow: none;
+      }
     }
 
-    #terminal {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 30vh;
-      background: rgba(0, 0, 0, 0.85);
-      padding: 10px;
-      font-size: 16px;
-      overflow-y: auto;
-      z-index: 2;
+    @keyframes glitch {
+      0% {
+        text-shadow: 2px 0 red, -2px 0 blue;
+      }
+      20% {
+        text-shadow: -2px 0 lime, 2px 0 blue;
+      }
+      40% {
+        text-shadow: 2px 2px red, -2px -2px blue;
+      }
+      60% {
+        text-shadow: -2px 2px lime, 2px -2px red;
+      }
+      80% {
+        text-shadow: 2px -2px blue, -2px 2px red;
+      }
+      100% {
+        text-shadow: none;
+      }
     }
 
-    .static {
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      background: url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif') repeat;
-      opacity: 0.07;
-      z-index: 0;
-    }
-
-    #virus-scan {
-      position: fixed;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 300px;
-      background: #111;
-      color: red;
-      padding: 20px;
-      border: 2px solid red;
-      text-align: center;
-      z-index: 4;
-    }
-
-    #progress {
-      width: 0%;
-      height: 20px;
-      background: red;
-      transition: width 0.3s;
-    }
-
-    #progress-container {
-      width: 100%;
-      background: #333;
-      margin-top: 10px;
-    }
-
-    #screamer {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      z-index: 99;
-      justify-content: center;
+    /* Center symbol */
+    .symbol-container {
+      flex-grow: 1;
+      display: flex;
       align-items: center;
+      justify-content: center;
     }
 
-    #screamer img {
-      max-width: 100vw;
-      max-height: 100vh;
+    .symbol-container img {
+      width: 400px;
+      height: auto;
+      opacity: 0.9;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    #biosScreen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background: #000;
-      color: #0f0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 100;
-      font-family: monospace;
-      padding: 40px;
-      font-size: 18px;
+    .symbol-container img:hover {
+      opacity: 1;
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
     }
 
-    #rebootBtn {
-      display: none;
-      margin-top: 20px;
-      background: red;
-      border: none;
-      color: white;
+    .footer-cta {
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 5vh;
       padding: 10px 20px;
-      font-size: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
       cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    #countdown {
-      font-size: 28px;
-      color: red;
-      margin-top: 20px;
+    .footer-cta:hover {
+      background-color: var(--symbol-color);
+      color: #000;
+      border-color: var(--symbol-color);
     }
 
-    #red-flash {
-      position: fixed;
+    .grain-overlay {
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: red;
-      opacity: 0;
-      z-index: 98;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.05;
     }
   </style>
 </head>
 <body>
+  <canvas id="background-canvas"></canvas>
+  <div class="grain-overlay"></div>
 
-  <div class="static"></div>
-  <canvas id="matrix"></canvas>
-  <div id="mainText">SYSTEM HACKED</div>
-  <div id="terminal"></div>
+  <div class="main-content">
+    <h1 class="title">D A R ꓘ</h1>
+    <h1 class="tit">O S I N T</h1>
 
-  <div id="virus-scan">
-    🔍 Scanning your files...
-    <div id="progress-container">
-      <div id="progress"></div>
+    <!-- Triquetra symbol centered -->
+    <div class="symbol-container" style="margin-top: -180px;">
+      <img src="Untitled design.png" alt="Triquetra Symbol">
     </div>
-  </div>
 
-  <div id="screamer">
-    <img src="https://cyble.com/wp-content/uploads/2022/10/Figure-7-File-names-changed-by-the-fake-ransomware.jpg" alt="Screamer">
+    <div class="footer-cta" style="margin-top: -100px;">ENTER THE CHALLENGE</div>
   </div>
-
-  <div id="red-flash"></div>
-<center>
-  <div id="biosScreen">
-    <h2>BIOS V3.6 - SYSTEM RECOVERY</h2>
-    <p>Detected critical failure in user partition 0x00AAFF.</p>
-    <p>Overwriting bootloader...</p>
-    <p id="countdown">System will reboot in 10</p>
-    <button id="rebootBtn" onclick="location.reload()">Reboot Now</button>
-  </div>
-</center>
-  <audio id="bgAudio" autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/10/24/audio_248c0a0d93.mp3" type="audio/mp3">
-  </audio>
-
-  <audio id="screamSound">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/30/audio_b3b15eab8e.mp3" type="audio/mp3">
-  </audio>
 
   <script>
-    // Matrix effect
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-    const letters = "01▌█▓▒░#".split("");
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array.from({ length: columns }).fill(1);
+    const canvas = document.getElementById('background-canvas');
+    const ctx = canvas.getContext('2d');
 
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px monospace";
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
-      for (let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+    let particles = [];
+    const particleCount = 100;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.2;
+        this.vy = (Math.random() - 0.5) * 0.2;
+        this.radius = Math.random() * 0.5 + 0.2;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(100, 100, 100, 0.5)';
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(150, 150, 150, ${1 - distance / 120})`;
+            ctx.lineWidth = 0.2;
+            ctx.stroke();
+          }
         }
-        drops[i]++;
       }
-    }
-    setInterval(drawMatrix, 35);
-
-    // Terminal logs
-    const terminal = document.getElementById("terminal");
-    const logs = [
-      "[ACCESS] Injecting payload...",
-      "[MALWARE] ransomware.exe launched",
-      "[ALERT] Webcam active",
-      "[ROOTKIT] Kernel access granted",
-      "[LOG] Stealing data...",
-      "[CRITICAL] SYSTEM CORRUPTED",
-      "[UPLOAD] Files sent to darkweb...",
-      "[SCAN] Encrypting local storage..."
-    ];
-    let logIndex = 0;
-
-    function printLog() {
-      if (logIndex < logs.length) {
-        const p = document.createElement("div");
-        p.textContent = logs[logIndex++];
-        terminal.appendChild(p);
-        terminal.scrollTop = terminal.scrollHeight;
-        setTimeout(printLog, 1000);
-      }
-    }
-    printLog();
-
-    // Virus scan simulation
-    const progress = document.getElementById("progress");
-    let percent = 0;
-    const scan = setInterval(() => {
-      percent += 5;
-      progress.style.width = percent + "%";
-      if (percent >= 100) {
-        clearInterval(scan);
-        document.getElementById("virus-scan").innerHTML = "🧟 System Breach Confirmed";
-        setTimeout(triggerScreamer, 1000);
-        setTimeout(showBIOS, 3000);
-      }
-    }, 300);
-
-    // Screamer
-    function triggerScreamer() {
-      const flash = document.getElementById("red-flash");
-      flash.style.opacity = 1;
-      setTimeout(() => flash.style.opacity = 0, 200);
-
-      const screamer = document.getElementById("screamer");
-      const screamSound = document.getElementById("screamSound");
-      screamer.style.display = 'flex';
-      screamSound.play();
-      setTimeout(() => screamer.style.display = 'none', 2500);
+      requestAnimationFrame(animate);
     }
 
-    // BIOS reboot
-    function showBIOS() {
-      document.getElementById("biosScreen").style.display = "block";
-      let countdown = 10;
-      const timer = setInterval(() => {
-        countdown--;
-        document.getElementById("countdown").innerText = "System will reboot in " + countdown;
-        if (countdown === 0) {
-          clearInterval(timer);
-          document.getElementById("countdown").innerText = "Ready to reboot.";
-          document.getElementById("rebootBtn").style.display = "inline-block";
-        }
-      }, 1000);
-    }
-
-    // Background audio autoplay
-    const bgAudio = document.getElementById("bgAudio");
-    bgAudio.volume = 0.5;
-    bgAudio.play().catch(() => {
-      document.body.addEventListener("click", () => bgAudio.play(), { once: true });
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      init();
     });
+
+    init();
+    animate();
   </script>
 </body>
 </html>
